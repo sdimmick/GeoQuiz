@@ -19,12 +19,14 @@ class MainActivity : ComponentActivity() {
 
     private val questionBank = listOf(
         Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true),
+//        Question(R.string.question_oceans, true),
+//        Question(R.string.question_mideast, false),
+//        Question(R.string.question_africa, false),
+//        Question(R.string.question_americas, true),
+//        Question(R.string.question_asia, true),
     )
+
+    private val answers = HashMap<Question, Boolean>()
 
     private var currentIndex = 0
 
@@ -82,12 +84,36 @@ class MainActivity : ComponentActivity() {
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         questionTextView.setText(questionTextResId)
+        updateUI()
+    }
+
+    private fun updateUI() {
+        val question = questionBank[currentIndex]
+        val buttonsEnabled = !answers.containsKey(question)
+
+        // Toggle button enabled / disabled for previously answered questions
+        trueButton.isEnabled = buttonsEnabled
+        falseButton.isEnabled = buttonsEnabled
+
+        // Display a toast if all questions have been answered
+        if (answers.size == questionBank.size) {
+            val correctAnswerCount = answers.count { (_, isCorrect) -> isCorrect }
+            val score = ((correctAnswerCount.toFloat() / answers.size) * 100).toInt()
+            val text = resources.getString(R.string.quiz_score, score)
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
-        val correctAnswer = questionBank[currentIndex].answer
-        val messageResId =
-            if (userAnswer == correctAnswer) R.string.correct_toast else R.string.incorrect_toast
+        val question = questionBank[currentIndex]
+        val correctAnswer = question.answer
+        val isCorrect = userAnswer == correctAnswer
+
+        val messageResId = if (isCorrect) R.string.correct_toast else R.string.incorrect_toast
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+
+        answers[question] = isCorrect
+
+        updateUI()
     }
 }
