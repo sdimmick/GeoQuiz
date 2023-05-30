@@ -15,7 +15,13 @@ class QuizViewModel : ViewModel() {
     )
 
     var currentIndex = 0
-    var isCheater = false
+
+    private val cheatedQuestions = HashMap<Int, Boolean>()
+
+    fun isCheater() = cheatedQuestions[currentIndex] ?: false
+    fun setCheater(cheater: Boolean) {
+        cheatedQuestions[currentIndex] = cheater
+    }
 
     val currentQuestionAnswer: Boolean
         get() = questionBank[currentIndex].answer
