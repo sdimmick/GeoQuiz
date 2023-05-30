@@ -17,6 +17,7 @@ class MainActivity : ComponentActivity() {
         private const val TAG = "MainActivity"
         private const val KEY_INDEX = "index"
         private const val REQUEST_CODE_CHEAT = 0
+        const val MAX_CHEATS = 3
     }
 
     private lateinit var trueButton: Button
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var nextButton: Button
     private lateinit var cheatButton: Button
     private lateinit var questionTextView: TextView
+    private lateinit var remainingCheatsTextView: TextView
 
     private val quizViewModel: QuizViewModel by lazy {
         ViewModelProvider(this)[QuizViewModel::class.java]
@@ -42,6 +44,7 @@ class MainActivity : ComponentActivity() {
         nextButton = findViewById(R.id.next_button)
         cheatButton = findViewById(R.id.cheat_button)
         questionTextView = findViewById(R.id.question_text_view)
+        remainingCheatsTextView = findViewById(R.id.remaining_cheats)
 
         trueButton.setOnClickListener {
             checkAnswer(true)
@@ -100,6 +103,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume()")
+        updateCheatCount()
     }
 
     override fun onPause() {
@@ -115,6 +119,15 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy()")
+    }
+
+    private fun updateCheatCount() {
+        val remainingCheats = MAX_CHEATS - quizViewModel.cheatCount
+        remainingCheatsTextView.text =
+            resources.getString(R.string.remaining_cheats, remainingCheats)
+
+        val cheatButtonEnabled = remainingCheats > 0
+        cheatButton.isEnabled = cheatButtonEnabled
     }
 
     private fun updateQuestion() {

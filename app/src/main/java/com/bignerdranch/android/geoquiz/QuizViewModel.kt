@@ -23,6 +23,9 @@ class QuizViewModel : ViewModel() {
         cheatedQuestions[currentIndex] = cheater
     }
 
+    val cheatCount: Int
+        get() = cheatedQuestions.count { (_, didCheat) -> didCheat }
+
     val currentQuestionAnswer: Boolean
         get() = questionBank[currentIndex].answer
 
